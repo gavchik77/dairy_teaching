@@ -180,7 +180,59 @@
   </section>
 
   <section class="card hidden" id="step4">
-    <p class="stepno">Step 4 · Cost verification</p>
+    <p class="stepno">Step 4 · Voluntary intake / rumen fill</p>
+    <h2>Can the animal realistically eat the calculated ration?</h2>
+
+    <p>
+      High-NDF forage can limit intake because it is bulky and leaves the rumen more slowly.
+      For this teaching exercise use two reference checks:
+    </p>
+
+    <div class="reference-box">
+      <div><span>Low-quality silage benchmark</span><strong>about 10–11 kg silage DM/day</strong></div>
+      <div><span>Typical NDF intake range</span><strong>1.1–1.2% of body weight/day</strong></div>
+      <div><span>Animal live weight</span><strong>400 kg</strong></div>
+    </div>
+
+    <div class="formula">
+      Lower NDF intake benchmark = 400 × 1.1%<br>
+      Upper NDF intake benchmark = 400 × 1.2%<br>
+      Actual NDF intake % BW = total NDF kg/day ÷ 400 × 100
+    </div>
+
+    <div class="question-grid three">
+      <label>NDF intake at 1.1% BW (kg/day)
+        <input id="ndfLimitLow" type="number" step="0.01">
+        <span class="field-feedback" id="ndfLimitLowFeedback"></span>
+      </label>
+      <label>NDF intake at 1.2% BW (kg/day)
+        <input id="ndfLimitHigh" type="number" step="0.01">
+        <span class="field-feedback" id="ndfLimitHighFeedback"></span>
+      </label>
+      <label>Actual NDF intake (% BW/day)
+        <input id="actualNDFbw" type="number" step="0.01">
+        <span class="field-feedback" id="actualNDFbwFeedback"></span>
+      </label>
+    </div>
+
+    <div class="live-results compact">
+      <div><span>Calculated silage DM eaten</span><strong id="intakeSilageDM">—</strong></div>
+      <div><span>Calculated total NDF eaten</span><strong id="intakeTotalNDF">—</strong></div>
+      <div><span>Physical-intake interpretation</span><strong id="intakeVerdict">—</strong></div>
+    </div>
+
+    <div id="intakeFeedback" class="feedback neutral">
+      Check the NDF intake against body weight before moving to cost.
+    </div>
+
+    <p class="small">
+      This is a teaching benchmark, not an absolute biological cut-off. Voluntary intake also depends
+      on digestibility, forage chop length, animal type, feeding management and other diet factors.
+    </p>
+  </section>
+
+  <section class="card hidden" id="step5">
+    <p class="stepno">Step 5 · Cost verification</p>
     <h2>Only after the ration passes the nutritional checks, calculate cost</h2>
 
     <div class="formula" id="costFormula"></div>

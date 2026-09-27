@@ -16,8 +16,9 @@ The intended sequence is:
 2. **ME allocation** — divide the total 87 MJ/day requirement between silage and supplement using the Step 1 proportions.
 3. **Dry matter eaten** — convert each feed's allocated MJ requirement to kg DM using its own ME value.
 4. **Fresh/as-fed quantity** — convert each feed's DM amount to kg fresh feed using its DM percentage.
-5. **NDF check** — calculate NDF from the actual DM amounts eaten.
-6. **Cost verification** — calculate cost only after the nutritional checks.
+5. **NDF concentration check** — calculate NDF from the actual DM amounts eaten.
+6. **Voluntary-intake / rumen-fill check** — compare silage DM intake and NDF intake (% BW) with teaching benchmarks.
+7. **Cost verification** — calculate cost only after the nutritional and intake checks.
 
 ## Step 2 method used
 
@@ -78,6 +79,30 @@ Animal/target values:
 - 30% minimum NDF
 - 12 kg DM/day maximum intake
 
+
+## Voluntary intake / rumen fill teaching check
+
+After the NDF concentration calculation, the student checks whether the ration may be physically limited by forage bulk.
+
+Teaching benchmarks used in the app:
+
+- Low-quality silage voluntary intake: approximately **10–11 kg silage DM/day**
+- Typical NDF intake benchmark: approximately **1.1–1.2% of body weight/day**
+- At **400 kg live weight**, this corresponds to:
+  - 1.1% BW = **4.40 kg NDF/day**
+  - 1.2% BW = **4.80 kg NDF/day**
+
+The student calculates:
+
+```text
+actual NDF intake % BW
+= total NDF kg/day / 400 × 100
+```
+
+The app treats this as a **teaching benchmark rather than an absolute cut-off** because voluntary intake also depends on digestibility, forage structure, animal type and feeding management.
+
+This additional step is intentionally placed **before cost**. A ration that is cheap on paper is not useful if the animal is unlikely to consume the calculated amount.
+
 ## GitHub Pages
 
 Upload these files to the root of a GitHub repository:
@@ -92,3 +117,7 @@ Then enable:
 **Settings → Pages → Deploy from a branch → main → /(root)**
 
 No framework, package manager, server, or build step is required.
+
+## Reference context supplied for the teaching benchmark
+
+The voluntary-intake and NDF-fill section was added from the teaching references supplied with the exercise, including Teagasc guidance on intake, Tirlán silage-analysis guidance, and Missouri Extension material on NDF intake.

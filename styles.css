@@ -56,3 +56,10 @@ details{margin-top:12px} summary{cursor:pointer;font-weight:750}
 .summary-grid span{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase}.summary-grid strong{font-size:1.12rem}
 @media(max-width:800px){.facts,.summary-grid,.question-grid,.question-grid.three,.choices,.live-results,.live-results.compact{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.facts,.summary-grid,.question-grid,.question-grid.three,.choices,.live-results,.live-results.compact{grid-template-columns:1fr}}
+
+.reference-box{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.reference-box div{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfcfb}
+.reference-box span{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.reference-box strong{display:block;font-size:1.05rem;margin-top:3px}
+@media(max-width:800px){.reference-box{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.reference-box{grid-template-columns:1fr}}

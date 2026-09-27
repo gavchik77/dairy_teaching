@@ -74,7 +74,7 @@ function markField(inputId, feedbackId, ok, correctText="Correct"){
 function clearFields(){
   [
     "silagePct","suppPct","silageDM","suppDM","silageFresh","suppFresh",
-    "silageNDFkg","suppNDFkg","dietNDFpct","suppCost","priceCheck"
+    "silageNDFkg","suppNDFkg","dietNDFpct","ndfLimitLow","ndfLimitHigh","actualNDFbw","suppCost","priceCheck"
   ].forEach(id=>$(id).value="");
 
   document.querySelectorAll("input").forEach(i=>i.classList.remove("good","bad"));
@@ -82,12 +82,13 @@ function clearFields(){
     f.textContent=""; f.className="field-feedback";
   });
 
-  ["step2","step3","step4","finalCard","asFedSection"].forEach(hide);
+  ["step2","step3","step4","step5","finalCard","asFedSection"].forEach(hide);
 
   setFeedback("proteinFeedback","neutral","The two proportions must add to 100% and give an 11% CP blend.");
   setFeedback("dmFeedback","neutral","Calculate both DM amounts. The app checks them as soon as you enter them.");
   setFeedback("freshFeedback","neutral","Convert DM to fresh weight using each feed's DM percentage.");
   setFeedback("ndfFeedback","neutral","The ration must contain at least 30% NDF.");
+  setFeedback("intakeFeedback","neutral","Check the NDF intake against body weight before moving to cost.");
   setFeedback("costFeedback","neutral","Use the fresh supplement amount from Step 2.");
 }
 
@@ -180,7 +181,7 @@ function validateDM(){
   }else{
     setFeedback("dmFeedback","fail",
       "Use the ME allocated to each feed above and divide by that feed's ME (MJ/kg DM).");
-    hide("asFedSection"); hide("step3"); hide("step4"); hide("finalCard");
+    hide("asFedSection"); hide("step3"); hide("step4"); hide("step5"); hide("finalCard");
   }
   return ok;
 }
@@ -202,7 +203,7 @@ function validateFresh(){
   }else{
     setFeedback("freshFeedback","fail",
       `Remember: fresh weight = DM ÷ DM fraction. Silage is 20% DM; ${e.s.name} is ${e.s.dm}% DM.`);
-    hide("step3"); hide("step4"); hide("finalCard");
+    hide("step3"); hide("step4"); hide("step5"); hide("finalCard");
   }
   return ok;
 }
@@ -221,12 +222,77 @@ function validateNDF(){
   if(ok){
     const pass=e.ndfPct>=TARGET.minNdf;
     setFeedback("ndfFeedback",pass?"pass":"warn",
-      `Correct. Diet NDF = ${e.ndfPct.toFixed(2)}%. ${pass?"It passes the 30% minimum. Proceed to cost verification.":"It fails the 30% minimum. This ration is nutritionally unacceptable, but you can still calculate its cost for comparison."}`);
+      `Correct. Diet NDF = ${e.ndfPct.toFixed(2)}%. ${pass?"It passes the 30% concentration minimum. Now check whether total NDF intake may physically limit voluntary intake.":"It fails the 30% concentration minimum. Continue to the intake check to see the second fibre constraint."}`);
+    updateIntakeDisplay();
     show("step4");
   }else{
     setFeedback("ndfFeedback","fail",
       "Calculate NDF kg from each actual DM amount, add them, then divide by total DM and multiply by 100.");
-    hide("step4"); hide("finalCard");
+    hide("step4"); hide("step5"); hide("finalCard");
+  }
+  return ok;
+}
+
+
+function updateIntakeDisplay(){
+  const e=expected();
+  $("intakeSilageDM").textContent=`${e.silDM.toFixed(2)} kg DM/day`;
+  $("intakeTotalNDF").textContent=`${e.totalNDFkg.toFixed(2)} kg/day`;
+
+  const pctBW=e.totalNDFkg/400*100;
+  const silageWithin=e.silDM<=11;
+  const ndfWithinUpper=pctBW<=1.2;
+
+  if(silageWithin && ndfWithinUpper){
+    $("intakeVerdict").textContent="Within teaching benchmarks";
+  }else if(!silageWithin && !ndfWithinUpper){
+    $("intakeVerdict").textContent="Likely physical-intake concern";
+  }else{
+    $("intakeVerdict").textContent="Check rumen-fill risk";
+  }
+}
+
+function validateIntake(){
+  const e=expected();
+  const low=400*0.011;
+  const high=400*0.012;
+  const actual=e.totalNDFkg/400*100;
+
+  const a=num("ndfLimitLow"), b=num("ndfLimitHigh"), c=num("actualNDFbw");
+
+  markField("ndfLimitLow","ndfLimitLowFeedback",close(a,low,.03));
+  markField("ndfLimitHigh","ndfLimitHighFeedback",close(b,high,.03));
+  markField("actualNDFbw","actualNDFbwFeedback",close(c,actual,.03));
+
+  if(!Number.isFinite(a)||!Number.isFinite(b)||!Number.isFinite(c)) return false;
+
+  const ok=close(a,low,.03)&&close(b,high,.03)&&close(c,actual,.03);
+  if(ok){
+    const silageWithin=e.silDM<=11;
+    const belowLow=actual<1.1;
+    const withinBand=actual>=1.1 && actual<=1.2;
+    const aboveHigh=actual>1.2;
+
+    let msg="";
+    let type="pass";
+
+    if(aboveHigh){
+      type="warn";
+      msg=`Correct. The ration supplies ${e.totalNDFkg.toFixed(2)} kg NDF/day = ${actual.toFixed(2)}% of BW, above the 1.2% reference. Silage DM itself is ${e.silDM.toFixed(2)} kg/day ${silageWithin?"and is within":"and exceeds"} the 10–11 kg low-quality-silage benchmark. This suggests a possible rumen-fill / voluntary-intake limitation.`;
+    }else if(withinBand){
+      type="warn";
+      msg=`Correct. NDF intake is ${actual.toFixed(2)}% of BW, within the 1.1–1.2% reference range. Silage DM is ${e.silDM.toFixed(2)} kg/day. Intake may be close to the physical-fill limit, so interpret the ration cautiously.`;
+    }else{
+      type="pass";
+      msg=`Correct. NDF intake is ${actual.toFixed(2)}% of BW, below the 1.1% reference, and silage DM is ${e.silDM.toFixed(2)} kg/day. This does not indicate an NDF-fill limitation from these teaching benchmarks.`;
+    }
+
+    setFeedback("intakeFeedback",type,msg);
+    show("step5");
+  }else{
+    setFeedback("intakeFeedback","fail",
+      "Calculate 1.1% and 1.2% of 400 kg, then express the ration's total NDF intake as a percentage of live weight.");
+    hide("step5"); hide("finalCard");
   }
   return ok;
 }
@@ -267,9 +333,10 @@ function renderFinal(){
       <div><span>Fresh silage</span><strong>${e.silFresh.toFixed(2)} kg</strong></div>
       <div><span>Fresh supplement</span><strong>${e.suppFresh.toFixed(2)} kg</strong></div>
       <div><span>Supplement cost</span><strong>€${e.cost.toFixed(2)}/day</strong></div>
-      <div><span>NDF check</span><strong>${ndfPass?"PASS":"FAIL"}</strong></div>
+      <div><span>NDF concentration</span><strong>${ndfPass?"PASS":"FAIL"}</strong></div>
+      <div><span>NDF intake</span><strong>${(e.totalNDFkg/400*100).toFixed(2)}% BW</strong></div>
     </div>
-    <p><strong>Calculation order used:</strong> protein proportions → divide the 87 MJ requirement between feeds → convert each ME share to kg DM → convert DM to fresh feed offered → NDF check → cost.</p>`;
+    <p><strong>Calculation order used:</strong> protein proportions → divide the 87 MJ requirement between feeds → convert each ME share to kg DM → convert DM to fresh feed offered → NDF concentration check → voluntary-intake / NDF-fill check → cost.</p>`;
 }
 
 // Question 1
@@ -308,6 +375,7 @@ document.querySelectorAll("[data-feed]").forEach(btn=>{
 ["silageDM","suppDM"].forEach(id=>$(id).addEventListener("input",validateDM));
 ["silageFresh","suppFresh"].forEach(id=>$(id).addEventListener("input",validateFresh));
 ["silageNDFkg","suppNDFkg","dietNDFpct"].forEach(id=>$(id).addEventListener("input",validateNDF));
+["ndfLimitLow","ndfLimitHigh","actualNDFbw"].forEach(id=>$(id).addEventListener("input",validateIntake));
 ["suppCost","priceCheck"].forEach(id=>$(id).addEventListener("input",validateCost));
 
 $("anotherFeed").addEventListener("click",()=>{
