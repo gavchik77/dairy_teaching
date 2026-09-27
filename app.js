@@ -2,9 +2,9 @@ const TARGET = {cp:11, me:87, minNdf:30, maxDmi:12};
 const silage = {name:"Poor silage", cp:8, me:9, dm:20, ndf:55, price:0};
 
 const options = {
-  groundnut:{name:"Groundnut meal/cake",cp:53,me:13.2,dm:90,price:313},
-  barley:{name:"Rolled barley",cp:12,me:13,dm:86,price:270},
-  crunch:{name:"GAIN Weanling Crunch 18%",cp:18,me:13,dm:87,price:530}
+  groundnut:{name:"Groundnut meal/cake",cp:53,me:13.2,dm:90,ndf:22,price:313},
+  barley:{name:"Rolled barley",cp:12,me:13,dm:86,ndf:14,price:270},
+  crunch:{name:"GAIN Weanling Crunch 18%",cp:18,me:13,dm:87,ndf:20,price:530}
 };
 
 let selected = "groundnut";
@@ -28,7 +28,7 @@ function solution(optKey=selected){
   const suppDM = dmi * suppFrac;
   const silFresh = silDM / (silage.dm/100);
   const suppFresh = suppDM / (s.dm/100);
-  const ndfPct = silFrac * silage.ndf;
+  const ndfPct = silFrac * silage.ndf + suppFrac * s.ndf;
   const cost = suppFresh * (s.price/1000);
   return {s,suppFrac,silFrac,silME,suppME,dietME,dmi,silDM,suppDM,silFresh,suppFresh,ndfPct,cost};
 }
@@ -57,9 +57,11 @@ function updateOption(){
   const s = options[selected];
   const sol = solution();
   $("optionIntro").innerHTML =
-    `You are testing <strong>${s.name}</strong> with the 8% CP silage. Your first job is to determine how much of each feed is needed to make an <strong>11% CP diet on a DM basis</strong>.`;
+    `You are testing <strong>${s.name}</strong> with the 8% CP silage. Your first job is to determine how much of each feed is needed to make an <strong>11% CP diet on a DM basis</strong>. Later you will check NDF using 55% for silage and ${s.ndf}% for this supplement.`;
   $("proteinFormula").textContent =
     `${silage.cp}(1 − x) + ${s.cp}x = ${TARGET.cp}`;
+  $("ndfFormula").textContent =
+    `Diet NDF % = (silage fraction × ${silage.ndf}) + (supplement fraction × ${s.ndf})`;
   $("suppMELabel").firstChild.textContent = `ME contribution from ${s.name} (MJ/kg diet DM) `;
   $("suppDMlabel").firstChild.textContent = `${s.name} DM (kg/day) `;
   $("suppFreshLabel").firstChild.textContent = `${s.name} fresh weight (kg/day) `;
@@ -167,16 +169,16 @@ $("checkNDF").addEventListener("click",()=>{
   if(ok){
     unlocked.ndf=true;
     setFeedback("ndfFeedback", expectedPass?"pass":"warn",
-      `${expectedPass?"Correct.":"Correct calculation."} Conservative diet NDF = ${sol.ndfPct.toFixed(2)}%. ${expectedPass?"It passes the 30% minimum, so you may proceed to cost.":"It fails the 30% minimum. The ration is not acceptable under this exercise, but continue to cost to see why cheapest must never be judged before nutrient checks."}`);
+      `${expectedPass?"Correct.":"Correct calculation."} Diet NDF = ${sol.ndfPct.toFixed(2)}%. ${expectedPass?"It passes the 30% minimum, so you may proceed to cost.":"It fails the 30% minimum. The ration is not acceptable under this exercise, but continue to cost to see why cheapest must never be judged before nutrient checks."}`);
     show("step4");
     $("step4").scrollIntoView({behavior:"smooth",block:"start"});
   }else{
-    setFeedback("ndfFeedback","fail","Recheck: silage fraction × 55%. Then compare the result with 30%.");
+    setFeedback("ndfFeedback","fail","Recheck both contributions: (silage fraction × 55) + (supplement fraction × supplement NDF). Then compare the total with 30%.");
   }
 });
 
 $("hintNDF").addEventListener("click",()=>{
-  $("ndfHint").textContent="Use the silage fraction from Step 1. Example: 0.70 × 55 = 38.5% NDF.";
+  $("ndfHint").textContent=`Use both DM fractions from Step 1: (silage fraction × 55) + (supplement fraction × ${options[selected].ndf}).`;
   show("ndfHint");
 });
 
@@ -220,17 +222,17 @@ function renderResult(){
       <div class="metric"><span>Diet DM</span><strong>${sol.dmi.toFixed(2)} kg/day</strong></div>
       <div class="metric"><span>Diet CP</span><strong>11.00%</strong></div>
       <div class="metric"><span>ME</span><strong>87.0 MJ/day</strong></div>
-      <div class="metric"><span>Conservative NDF</span><strong>${sol.ndfPct.toFixed(2)}%</strong></div>
+      <div class="metric"><span>Diet NDF</span><strong>${sol.ndfPct.toFixed(2)}%</strong></div>
     </div>
     <div class="worked">
       <p><strong>Protein balance:</strong> ${(sol.silFrac*100).toFixed(2)}% silage DM + ${(sol.suppFrac*100).toFixed(2)}% ${sol.s.name} DM.</p>
       <p><strong>Fresh feeding amounts:</strong> ${sol.silFresh.toFixed(2)} kg silage + ${sol.suppFresh.toFixed(2)} kg ${sol.s.name}/head/day.</p>
       <p><strong>Purchased supplement cost:</strong> €${sol.cost.toFixed(2)}/head/day.</p>
-      <p><strong>NDF verdict:</strong> ${passesNdf ? "PASS" : "FAIL"} against the 30% minimum using the conservative check.</p>
+      <p><strong>NDF verdict:</strong> ${passesNdf ? "PASS" : "FAIL"} against the 30% minimum.</p>
     </div>
     <p><strong>Teaching conclusion:</strong> ${passesNdf
-      ? "This option passes the CP, ME, DMI and conservative NDF checks. Only now is its cost meaningful for comparison."
-      : "This option can be mathematically balanced for CP and ME, but it fails the conservative NDF check. Therefore a low or attractive cost would not make it an acceptable answer."}</p>`;
+      ? "This option passes the CP, ME, DMI and NDF checks. Only now is its cost meaningful for comparison."
+      : "This option can be mathematically balanced for CP and ME, but it fails the NDF check. Therefore a low or attractive cost would not make it an acceptable answer."}</p>`;
 }
 
 $("tryAnother").addEventListener("click",()=>{

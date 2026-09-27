@@ -32,12 +32,12 @@
       </thead>
       <tbody>
         <tr><td>Poor silage</td><td>20</td><td>8</td><td>9.0</td><td>55*</td><td>0**</td></tr>
-        <tr><td>Rolled barley</td><td>86</td><td>12</td><td>13.0</td><td>not given</td><td>270</td></tr>
-        <tr><td>GAIN Weanling Crunch</td><td>87</td><td>18</td><td>13.0</td><td>not given</td><td>530</td></tr>
-        <tr><td>Groundnut meal/cake</td><td>90</td><td>53</td><td>13.2</td><td>not given</td><td>313</td></tr>
+        <tr><td>Rolled barley</td><td>86</td><td>12</td><td>13.0</td><td>14</td><td>270</td></tr>
+        <tr><td>GAIN Weanling Crunch</td><td>87</td><td>18</td><td>13.0</td><td>20</td><td>530</td></tr>
+        <tr><td>Groundnut meal/cake</td><td>90</td><td>53</td><td>13.2</td><td>22</td><td>313</td></tr>
       </tbody>
     </table>
-    <p class="small">* Silage NDF supplied by teacher. ** Silage is already on farm, so only purchased supplement cost is compared. For the NDF exercise, supplement NDF is treated as 0 unless the teacher changes the assumption.</p>
+    <p class="small">* Silage NDF supplied by teacher. ** Silage is already on farm, so only purchased supplement cost is compared. NDF values used in this exercise: silage 55%, rolled barley 14%, GAIN Weanling Crunch 20%, groundnut meal/cake 22%.</p>
   </section>
 
   <section class="card start-card" id="startCard">
@@ -128,9 +128,9 @@
   <section class="card hidden" id="step3">
     <p class="stepno">Step 3 · Fibre</p>
     <h2>Check NDF before you look at cost</h2>
-    <p>For this exercise, count only the silage NDF. That makes the check conservative because the assignment does not give supplement NDF.</p>
+    <p>Now calculate NDF from <strong>both feeds</strong>. Use the diet DM fractions from Step 1 and the NDF values in the feed table.</p>
 
-    <div class="formula">Diet NDF % = silage fraction × 55%</div>
+    <div class="formula" id="ndfFormula">Diet NDF % = (silage fraction × 55) + (supplement fraction × supplement NDF)</div>
     <div class="question-grid">
       <label>Diet NDF (% of DM)
         <input id="dietNDF" type="number" step="0.01">

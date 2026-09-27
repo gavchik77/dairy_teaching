@@ -55,13 +55,20 @@ DMI needed = 87 / diet ME
 They must also check that DMI is not above the 12 kg DM/day maximum.
 
 ### Step 3 — NDF
-Students calculate the conservative NDF check:
+Students calculate NDF from both feeds:
 
 ```text
-diet NDF % = silage fraction × 55%
+diet NDF % =
+(silage fraction × 55%)
++ (supplement fraction × supplement NDF%)
 ```
 
-The supplement NDF values are not given in the assignment, so they are treated as zero for this classroom check.
+NDF values used in the exercise:
+
+- Poor silage: 55%
+- Rolled barley: 14%
+- GAIN Weanling Crunch: 20%
+- Groundnut meal/cake: 22%
 
 Students decide whether the result meets the 30% minimum.
 
@@ -100,9 +107,9 @@ This demonstrates an important teaching point:
 - 12 kg DM/day maximum intake
 - 30% minimum NDF for the teaching exercise
 - Poor silage: 20% DM, 8% CP, 9 MJ ME/kg DM, 55% NDF
-- Rolled barley: 86% DM, 12% CP, 13 MJ ME/kg DM, €270/t
-- 18% crunch: 87% DM, 18% CP, 13 MJ ME/kg DM, €530/t
-- Groundnut meal: 90% DM, 53% CP, 13.2 MJ ME/kg DM, €313/t
+- Rolled barley: 86% DM, 12% CP, 13 MJ ME/kg DM, 14% NDF, €270/t
+- 18% crunch: 87% DM, 18% CP, 13 MJ ME/kg DM, 20% NDF, €530/t
+- Groundnut meal: 90% DM, 53% CP, 13.2 MJ ME/kg DM, 22% NDF, €313/t
 
 ## Run locally
 
