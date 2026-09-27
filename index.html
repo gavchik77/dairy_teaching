@@ -9,189 +9,203 @@
 <body>
 <header class="hero">
   <div class="wrap">
-    <p class="kicker">Guided calculation · student mode</p>
+    <p class="kicker">Guided student worksheet</p>
     <h1>Beef Ration Tutor</h1>
-    <p>Do the calculation in the correct order. The app asks the question first, checks your answer, then unlocks the next step.</p>
+    <p>Work through the ration in the same order you would on paper. Each section responds immediately as you enter your calculation.</p>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="card scenario">
-    <h2>Assignment</h2>
-    <p><strong>Animal:</strong> 400 kg medium castrate, target 1 kg/day liveweight gain.</p>
+  <section class="card">
+    <h2>Assignment data</h2>
+    <p><strong>Animal:</strong> 400 kg medium castrate · target gain 1 kg/day</p>
+
     <div class="facts">
-      <div><span>Target CP</span><strong>11% of DM</strong></div>
-      <div><span>ME requirement</span><strong>87 MJ/day</strong></div>
-      <div><span>Minimum NDF</span><strong>30% of DM</strong></div>
+      <div><span>Diet CP target</span><strong>11%</strong></div>
+      <div><span>Total ME required</span><strong>87 MJ/day</strong></div>
+      <div><span>Minimum NDF</span><strong>30%</strong></div>
       <div><span>Maximum DMI</span><strong>12 kg DM/day</strong></div>
     </div>
 
-    <table>
-      <thead>
-        <tr><th>Feed</th><th>DM %</th><th>CP % DM</th><th>ME MJ/kg DM</th><th>NDF % DM</th><th>€/t fresh</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Poor silage</td><td>20</td><td>8</td><td>9.0</td><td>55*</td><td>0**</td></tr>
-        <tr><td>Rolled barley</td><td>86</td><td>12</td><td>13.0</td><td>14</td><td>270</td></tr>
-        <tr><td>GAIN Weanling Crunch</td><td>87</td><td>18</td><td>13.0</td><td>20</td><td>530</td></tr>
-        <tr><td>Groundnut meal/cake</td><td>90</td><td>53</td><td>13.2</td><td>22</td><td>313</td></tr>
-      </tbody>
-    </table>
-    <p class="small">* Silage NDF supplied by teacher. ** Silage is already on farm, so only purchased supplement cost is compared. NDF values used in this exercise: silage 55%, rolled barley 14%, GAIN Weanling Crunch 20%, groundnut meal/cake 22%.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Feed</th><th>DM %</th><th>CP %</th><th>ME MJ/kg DM</th><th>NDF %</th><th>€/t fresh</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Poor-quality silage</td><td>20</td><td>8</td><td>9.0</td><td>55</td><td>already available</td></tr>
+          <tr><td>Rolled barley</td><td>86</td><td>12</td><td>13.0</td><td>14</td><td>270</td></tr>
+          <tr><td>GAIN Weanling Crunch</td><td>87</td><td>18</td><td>13.0</td><td>20</td><td>530</td></tr>
+          <tr><td>Groundnut meal/cake</td><td>90</td><td>53</td><td>13.2</td><td>22</td><td>313</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 
-  <section class="card start-card" id="startCard">
-    <p class="stepno">Before you calculate</p>
-    <h2>What is your first step?</h2>
-    <p>Choose the calculation you should do first.</p>
-    <div class="choices" id="firstChoices">
-      <button data-choice="cost">Calculate the cheapest €/day first</button>
-      <button data-choice="me">Calculate ME supplied first</button>
-      <button data-choice="protein">Balance the diet to the 11% CP target first</button>
-      <button data-choice="ndf">Check NDF first</button>
+  <section class="card" id="firstStepCard">
+    <p class="stepno">Question 1</p>
+    <h2>What is your first step in the calculation?</h2>
+    <div class="choices">
+      <button data-first="cost">Calculate cost</button>
+      <button data-first="ndf">Calculate NDF</button>
+      <button data-first="protein">Balance protein to 11% CP</button>
+      <button data-first="me">Calculate total ME</button>
     </div>
     <div id="firstFeedback" class="feedback neutral">Choose one answer.</div>
   </section>
 
-  <section class="card hidden" id="optionCard">
-    <p class="stepno">Choose an option to test</p>
-    <h2>Which supplement will you formulate with the silage?</h2>
-    <div class="option-tabs">
-      <button class="opt active" data-option="groundnut">Groundnut meal</button>
-      <button class="opt" data-option="barley">Rolled barley</button>
-      <button class="opt" data-option="crunch">18% crunch</button>
+  <section class="card hidden" id="chooseFeedCard">
+    <p class="stepno">Choose a ration to test</p>
+    <h2>Which purchased feed will you combine with the silage?</h2>
+    <div class="tabs">
+      <button class="tab active" data-feed="groundnut">Groundnut meal</button>
+      <button class="tab" data-feed="barley">Rolled barley</button>
+      <button class="tab" data-feed="crunch">18% crunch</button>
     </div>
-    <p id="optionIntro"></p>
+    <p id="feedDescription"></p>
   </section>
 
   <section class="card hidden" id="step1">
     <p class="stepno">Step 1 · Protein</p>
-    <h2>Balance the ration to 11% CP on a DM basis</h2>
-    <p>Let <strong>x</strong> = fraction of the total diet DM supplied by the selected supplement.</p>
-    <div class="formula" id="proteinFormula"></div>
+    <h2>Find the proportion of silage and supplement needed for 11% CP</h2>
+
+    <div class="formula" id="proteinEquation"></div>
+    <p class="small">Enter your result below. Feedback appears automatically.</p>
 
     <div class="question-grid">
-      <label>Supplement in diet DM (%)
-        <input id="suppPct" type="number" step="0.01" inputmode="decimal">
+      <label>Silage proportion (%)
+        <input id="silagePct" type="number" min="0" max="100" step="0.01">
+        <span class="field-feedback" id="silagePctFeedback"></span>
       </label>
-      <label>Silage in diet DM (%)
-        <input id="silagePct" type="number" step="0.01" inputmode="decimal">
+      <label id="suppPctLabel">Supplement proportion (%)
+        <input id="suppPct" type="number" min="0" max="100" step="0.01">
+        <span class="field-feedback" id="suppPctFeedback"></span>
       </label>
     </div>
 
-    <div class="actions">
-      <button id="checkProtein">Check protein balance</button>
-      <button class="ghost" id="hintProtein">Hint</button>
-    </div>
-    <div id="proteinHint" class="hint hidden"></div>
-    <div id="proteinFeedback" class="feedback neutral">Enter your calculation.</div>
+    <div id="proteinFeedback" class="feedback neutral">The two proportions must add to 100% and give an 11% CP blend.</div>
+
+    <details>
+      <summary>Need a hint?</summary>
+      <p>For two feeds, solve <strong>8(1 − x) + supplement CP × x = 11</strong>, where x is the supplement proportion.</p>
+    </details>
   </section>
 
   <section class="card hidden" id="step2">
-    <p class="stepno">Step 2 · Energy</p>
-    <h2>Calculate ME from each feed, then the DMI needed</h2>
-    <p>Use the DM proportions you calculated in Step 1.</p>
+    <p class="stepno">Step 2 · ME requirement from each feed</p>
+    <h2>Divide the animal's 87 MJ/day requirement using your Step 1 proportions</h2>
 
-    <div class="question-grid three">
-      <label>ME contribution from silage (MJ/kg diet DM)
-        <input id="silageMEcontrib" type="number" step="0.01">
-      </label>
-      <label id="suppMELabel">ME contribution from supplement (MJ/kg diet DM)
-        <input id="suppMEcontrib" type="number" step="0.01">
-      </label>
-      <label>Total diet ME (MJ/kg DM)
-        <input id="dietME" type="number" step="0.01">
-      </label>
+    <p>This is the calculation order:</p>
+    <div class="formula">
+      Silage ME required = silage proportion × 87 MJ/day<br>
+      Supplement ME required = supplement proportion × 87 MJ/day
     </div>
+
+    <div class="live-results">
+      <div>
+        <span>Silage ME required</span>
+        <strong id="silageMErequired">—</strong>
+        <small id="silageMEworking">—</small>
+      </div>
+      <div>
+        <span id="suppMEtitle">Supplement ME required</span>
+        <strong id="suppMErequired">—</strong>
+        <small id="suppMEworking">—</small>
+      </div>
+    </div>
+
+    <h3>Now convert each ME requirement to kg of dry matter eaten</h3>
+    <div class="formula" id="dmFormula"></div>
 
     <div class="question-grid">
-      <label>DMI needed to supply 87 MJ (kg DM/day)
-        <input id="dmiNeeded" type="number" step="0.01">
+      <label>Silage DM eaten (kg/day)
+        <input id="silageDM" type="number" step="0.01">
+        <span class="field-feedback" id="silageDMFeedback"></span>
       </label>
-      <label>Does this stay at or below 12 kg DM/day?
-        <select id="dmiPass">
-          <option value="">Choose...</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
+      <label id="suppDMLabel">Supplement DM eaten (kg/day)
+        <input id="suppDM" type="number" step="0.01">
+        <span class="field-feedback" id="suppDMFeedback"></span>
       </label>
     </div>
 
-    <div class="actions">
-      <button id="checkME">Check ME calculation</button>
-      <button class="ghost" id="hintME">Hint</button>
+    <div class="live-results compact">
+      <div><span>Total DMI</span><strong id="totalDMI">—</strong></div>
+      <div><span>Maximum allowed</span><strong>12.00 kg DM/day</strong></div>
+      <div><span>DMI check</span><strong id="dmiVerdict">—</strong></div>
     </div>
-    <div id="meHint" class="hint hidden"></div>
-    <div id="meFeedback" class="feedback neutral">Complete all energy fields.</div>
+
+    <div id="dmFeedback" class="feedback neutral">Calculate both DM amounts. The app checks them as soon as you enter them.</div>
+
+    <div id="asFedSection" class="hidden nested">
+      <h3>Only now calculate how much feed the animal actually receives per day</h3>
+      <div class="formula" id="freshFormula"></div>
+
+      <div class="question-grid">
+        <label>Fresh silage offered (kg/day)
+          <input id="silageFresh" type="number" step="0.01">
+          <span class="field-feedback" id="silageFreshFeedback"></span>
+        </label>
+        <label id="suppFreshLabel">Fresh supplement offered (kg/day)
+          <input id="suppFresh" type="number" step="0.01">
+          <span class="field-feedback" id="suppFreshFeedback"></span>
+        </label>
+      </div>
+      <div id="freshFeedback" class="feedback neutral">Convert DM to fresh weight using each feed's DM percentage.</div>
+    </div>
   </section>
 
   <section class="card hidden" id="step3">
-    <p class="stepno">Step 3 · Fibre</p>
-    <h2>Check NDF before you look at cost</h2>
-    <p>Now calculate NDF from <strong>both feeds</strong>. Use the diet DM fractions from Step 1 and the NDF values in the feed table.</p>
+    <p class="stepno">Step 3 · NDF</p>
+    <h2>Check the fibre concentration of the actual DM eaten</h2>
+    <p>Use the DM amounts from Step 2, not the original Step 1 percentages.</p>
 
-    <div class="formula" id="ndfFormula">Diet NDF % = (silage fraction × 55) + (supplement fraction × supplement NDF)</div>
-    <div class="question-grid">
-      <label>Diet NDF (% of DM)
-        <input id="dietNDF" type="number" step="0.01">
+    <div class="formula" id="ndfFormula"></div>
+
+    <div class="question-grid three">
+      <label>Silage NDF (kg/day)
+        <input id="silageNDFkg" type="number" step="0.01">
+        <span class="field-feedback" id="silageNDFFeedback"></span>
       </label>
-      <label>Does the ration meet the 30% minimum?
-        <select id="ndfPass">
-          <option value="">Choose...</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
+      <label id="suppNDFLabel">Supplement NDF (kg/day)
+        <input id="suppNDFkg" type="number" step="0.01">
+        <span class="field-feedback" id="suppNDFFeedback"></span>
+      </label>
+      <label>Diet NDF (% of total DM)
+        <input id="dietNDFpct" type="number" step="0.01">
+        <span class="field-feedback" id="dietNDFFeedback"></span>
       </label>
     </div>
 
-    <div class="actions">
-      <button id="checkNDF">Check NDF</button>
-      <button class="ghost" id="hintNDF">Hint</button>
-    </div>
-    <div id="ndfHint" class="hint hidden"></div>
-    <div id="ndfFeedback" class="feedback neutral">Do not calculate cost until this check is complete.</div>
+    <div id="ndfFeedback" class="feedback neutral">The ration must contain at least 30% NDF.</div>
   </section>
 
   <section class="card hidden" id="step4">
-    <p class="stepno">Step 4 · Cost</p>
-    <h2>Convert DM to fresh weight and verify daily supplement cost</h2>
+    <p class="stepno">Step 4 · Cost verification</p>
+    <h2>Only after the ration passes the nutritional checks, calculate cost</h2>
 
-    <div class="question-grid three">
-      <label>Silage DM (kg/day)
-        <input id="silageDMkg" type="number" step="0.01">
-      </label>
-      <label id="suppDMlabel">Supplement DM (kg/day)
-        <input id="suppDMkg" type="number" step="0.01">
-      </label>
-      <label id="suppFreshLabel">Supplement fresh weight (kg/day)
-        <input id="suppFreshKg" type="number" step="0.01">
-      </label>
-    </div>
+    <div class="formula" id="costFormula"></div>
 
     <div class="question-grid">
       <label id="suppCostLabel">Supplement cost (€/head/day)
         <input id="suppCost" type="number" step="0.01">
+        <span class="field-feedback" id="suppCostFeedback"></span>
       </label>
-      <label>Total fresh silage (kg/day)
-        <input id="silageFreshKg" type="number" step="0.01">
+      <label>Cost per tonne used in calculation (€)
+        <input id="priceCheck" type="number" step="1">
+        <span class="field-feedback" id="priceFeedback"></span>
       </label>
     </div>
 
-    <div class="actions">
-      <button id="checkCost">Check cost</button>
-      <button class="ghost" id="hintCost">Hint</button>
-    </div>
-    <div id="costHint" class="hint hidden"></div>
-    <div id="costFeedback" class="feedback neutral">Finish the conversion and cost calculation.</div>
+    <div id="costFeedback" class="feedback neutral">Use the fresh supplement amount from Step 2.</div>
   </section>
 
-  <section class="card hidden" id="resultCard">
-    <p class="stepno">Finished</p>
-    <h2 id="resultTitle">Result</h2>
-    <div id="workedResult"></div>
+  <section class="card hidden" id="finalCard">
+    <p class="stepno">Completed ration</p>
+    <h2 id="finalTitle">Result</h2>
+    <div id="finalSummary"></div>
     <div class="actions">
-      <button id="tryAnother">Try another supplement</button>
-      <button class="ghost" id="resetAll">Start again</button>
+      <button id="anotherFeed">Try another supplement</button>
+      <button id="restart" class="secondary">Start from Question 1</button>
     </div>
   </section>
 </main>

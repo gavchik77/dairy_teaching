@@ -1,147 +1,94 @@
-# Beef Ration Tutor — Guided Student App
+# Beef Ration Tutor v3
 
-This version is deliberately **not** a one-click ration calculator.
+A GitHub Pages-ready teaching app for a guided beef ration calculation.
 
-It teaches the calculation in sequence. The student must answer each stage correctly before the next stage unlocks.
+## Teaching order
 
-## Teaching sequence
+The app does **not** start by showing a completed ration.
 
-### Before calculation
-The app first asks:
+The student first answers:
 
-> **What is your first step?**
+> What is your first step in the calculation?
 
-The correct answer is:
+The intended sequence is:
 
-> **Balance the diet to the 11% CP target on a dry-matter basis.**
+1. **Protein** — calculate the silage and supplement proportions needed to reach 11% CP.
+2. **ME allocation** — divide the total 87 MJ/day requirement between silage and supplement using the Step 1 proportions.
+3. **Dry matter eaten** — convert each feed's allocated MJ requirement to kg DM using its own ME value.
+4. **Fresh/as-fed quantity** — convert each feed's DM amount to kg fresh feed using its DM percentage.
+5. **NDF check** — calculate NDF from the actual DM amounts eaten.
+6. **Cost verification** — calculate cost only after the nutritional checks.
 
-Students are told why starting with cost, ME or NDF is not the correct first calculation for this exercise.
+## Step 2 method used
 
-### Step 1 — Protein
-The student chooses one supplement:
-
-- Groundnut meal/cake
-- Rolled barley
-- 18% weanling crunch
-
-The student then solves the two-feed protein equation:
+For Step 1 proportions:
 
 ```text
-8(1 − x) + supplement_CP(x) = 11
-```
+Silage ME required
+= silage proportion × total ME requirement
 
-They enter:
-
-- % supplement in diet DM
-- % silage in diet DM
-
-The next step remains locked until the answer is correct.
-
-### Step 2 — ME
-Students calculate:
-
-```text
-silage fraction × silage ME
-supplement fraction × supplement ME
+Supplement ME required
+= supplement proportion × total ME requirement
 ```
 
 Then:
 
 ```text
-diet ME = both contributions added together
-DMI needed = 87 / diet ME
+Silage DM eaten
+= silage ME required / silage ME per kg DM
+
+Supplement DM eaten
+= supplement ME required / supplement ME per kg DM
 ```
 
-They must also check that DMI is not above the 12 kg DM/day maximum.
-
-### Step 3 — NDF
-Students calculate NDF from both feeds:
+Only after this is the fresh amount offered calculated:
 
 ```text
-diet NDF % =
-(silage fraction × 55%)
-+ (supplement fraction × supplement NDF%)
+Fresh feed kg
+= feed DM kg / feed DM fraction
 ```
 
-NDF values used in the exercise:
+## Live calculation / feedback
 
-- Poor silage: 55%
-- Rolled barley: 14%
-- GAIN Weanling Crunch: 20%
-- Groundnut meal/cake: 22%
+There are no "check answer" buttons in the calculation stages.
 
-Students decide whether the result meets the 30% minimum.
+As soon as the student enters a number:
 
-### Step 4 — Cost
-Only after the nutrient checks does the app unlock cost.
+- the field is checked;
+- correct values are marked;
+- incorrect values get immediate feedback;
+- the next part unlocks automatically once the current calculation is correct;
+- totals such as DMI update immediately.
 
-Students calculate:
+## Feed data
 
-```text
-silage DM = total DMI × silage fraction
-supplement DM = total DMI × supplement fraction
+| Feed | DM % | CP % | ME MJ/kg DM | NDF % | €/t fresh |
+|---|---:|---:|---:|---:|---:|
+| Poor-quality silage | 20 | 8 | 9.0 | 55 | already available |
+| Rolled barley | 86 | 12 | 13.0 | 14 | 270 |
+| GAIN Weanling Crunch | 87 | 18 | 13.0 | 20 | 530 |
+| Groundnut meal/cake | 90 | 53 | 13.2 | 22 | 313 |
 
-fresh feed = DM / DM fraction
-
-supplement cost/day = fresh supplement kg × €/kg fresh
-```
-
-The worked result only appears after the student completes the calculation correctly.
-
-## Why the three options are useful
-
-The same calculation can be repeated with different supplements.
-
-This demonstrates an important teaching point:
-
-- A ration can meet **protein and energy mathematically**
-- but still fail the **NDF/fibre constraint**
-- therefore **cost must be compared only after the biological constraints have been checked**
-
-## Default assignment data
+Animal/target values:
 
 - 400 kg medium castrate
 - 1 kg/day target LWG
-- 11% CP diet
+- 11% dietary CP
 - 87 MJ ME/day
+- 30% minimum NDF
 - 12 kg DM/day maximum intake
-- 30% minimum NDF for the teaching exercise
-- Poor silage: 20% DM, 8% CP, 9 MJ ME/kg DM, 55% NDF
-- Rolled barley: 86% DM, 12% CP, 13 MJ ME/kg DM, 14% NDF, €270/t
-- 18% crunch: 87% DM, 18% CP, 13 MJ ME/kg DM, 20% NDF, €530/t
-- Groundnut meal: 90% DM, 53% CP, 13.2 MJ ME/kg DM, 22% NDF, €313/t
-
-## Run locally
-
-Open `index.html`.
-
-Or:
-
-```bash
-python -m http.server 8000
-```
-
-and visit:
-
-```text
-http://localhost:8000
-```
 
 ## GitHub Pages
 
-Upload these files to a repository:
+Upload these files to the root of a GitHub repository:
 
 - `index.html`
 - `styles.css`
 - `app.js`
 - `README.md`
 
-Then:
+Then enable:
 
-1. Open repository **Settings**
-2. Choose **Pages**
-3. Select **Deploy from a branch**
-4. Select `main` and `/ (root)`
-5. Save
+**Settings → Pages → Deploy from a branch → main → /(root)**
 
-No backend or build process is required.
+No framework, package manager, server, or build step is required.
